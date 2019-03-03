@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from eda_parsing.my_parser import Parser
+from my_parser import Parser
 import pandas as pd
 import json
 import re
@@ -95,9 +95,11 @@ class my_eda_parser:
         }
     ]
 
-    def __init__(self, url_list=None):
-        if url_list:
-            self.url_list = url_list        # possibility to change url list
+    def __init__(self, url=None, path_list=None):
+        if path_list:
+            self.path_list = path_list        # possibility to change url list
+        if url:
+            self.url = url
 
 
     def parse_url_list(self):
@@ -107,7 +109,10 @@ class my_eda_parser:
         P = Parser(self.url)
         for path in self.path_list:
             page = 1
+            print('load ', path)
             while True:             # while pagination list contains data
+                print('Get page: ',page)
+
                 P.load_page(path=path + '?page=' + str(page))
                 if not P.split_page_to_elements(tag='div',classs='clearfix'):
                     break           # if pagination page is empty
@@ -130,11 +135,13 @@ class my_eda_parser:
         """
         Get recept of every element in self.elements_dict
         """
-        for e in self.elements_dict:
-            print('\t\tget recept of:\t',e['name'])
+        dict_count = len(self.elements_dict)
+        for i,e in enumerate(self.elements_dict):
+            print('\t\tGet recept:\t', str(i+1), '/', dict_count,'\t',e['name'])
             R = Parser(self.url)                                      # new Parser object to parse inner information
             R.load_page(e['link'])
             R.split_page_to_elements(tag='section',classs='recipe')
+
             additional_elements = R.parse_elements(self.tags2)[0]
             for t in self.tags2:
                 e[t['name']] = additional_elements.get(t['name'])     # append additional info to self.get_recepts

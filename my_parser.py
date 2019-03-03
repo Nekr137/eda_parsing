@@ -18,7 +18,6 @@ class Parser:
 
 
     def load_page(self, path):
-        print('load page...')
         self.path = path
 
         while True:
@@ -29,7 +28,6 @@ class Parser:
                 print('connection error')
 
     def split_page_to_elements(self,tag,classs):
-        print('split page...')
         elements_found = [b for b in BeautifulSoup(self.page, "html.parser").find_all(tag, classs)]
         if len(elements_found):
             self.elements += elements_found
@@ -44,7 +42,8 @@ class Parser:
         :param tags: dict list like [{'name':'...','tags':'...'} , {... }]
         :return:     self.elements_dict
         """
-        for element in self.elements:
+        elem_count = len(self.elements)
+        for i,element in enumerate(self.elements):
             data = {}                                   # dictionary like {'name':'...',    'time':'...',   ...}
             for elem_tags in tags:                      # find data via tag list
                 tmp = self.parse_element(element,elem_tags['tags'])
@@ -55,7 +54,7 @@ class Parser:
                     tmp = 0
                 data[elem_tags['name']] = tmp           # write to "data" dict
 
-            print('\tGet info from element:\t',data)
+            print('\tGet element info:\t',str(i+1),'/',elem_count)
             self.elements_dict.append(data)             # append data dict
         self.elements = []                              # clear dirty elements
         return self.elements_dict
