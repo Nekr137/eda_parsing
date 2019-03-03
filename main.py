@@ -23,7 +23,7 @@ def SaveData(data):
 def main():
     Japanese = ['recepty/vypechka-deserty/yaponskaya-kuhnya']
     Tay = ['recepty/tayskaya-kuhnya/vypechka-deserty']
-    data = GetData(type=Tay)   # type = Japanese or Tay, empty == both
+    data = GetData()   # type = Japanese or Tay, empty == both
     SaveData(data)                  # write data to db
 
 
