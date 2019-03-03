@@ -5,7 +5,7 @@ import datetime
 import json
 
 class my_db:
-    def __init__(self,dbname,username,password,table1name,table2name):
+    def __init__(self, dbname, username, password, table1name, table2name):
         self.dbname = dbname
         self.username = username
         self.psw = password
@@ -14,19 +14,26 @@ class my_db:
         self.connect()
 
     def connect(self):
-        try:
+        def connect():
             self.conn = psycopg2.connect(database=self.dbname, user=self.username, password=self.psw, host='127.0.0.1')
+
+        try:
+            connect()
         except:
+            # create db if not exist
             with psycopg2.connect(dbname='postgres',user='postgres', host='127.0.0.1',password='denekra') as self.conn:
                 self.conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
                 self.cmd("CREATE DATABASE %s  ;" % self.dbname)
-
-            self.conn = psycopg2.connect(database=self.dbname, user=self.username, password=self.psw, host='127.0.0.1')
+            connect()
             self.create_tables()
 
         self.conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 
     def append_data(self,data):
+        """
+        append parsed data to db
+        :param data:
+        """
         def write():
             for d in data:
                 id = self.get_from_table("""INSERT INTO %s(date,name,author,ingredients,prep_time,nutrition,bookmark,likes,dislikes)VALUES 
@@ -34,32 +41,41 @@ class my_db:
                             self.table1name,datetime.datetime.now(),d.get('name'),d.get('author'),d.get('ingredients'),
                             d.get('prep_time'),d.get('nutrition'),int(d.get('bookmark')),int(d.get('like')),int(d.get('dislike'))
                          ))
-                id = id[0][0]
+
+                id = id[0][0]       # foreign key
+
                 for i,step in enumerate(d.get('steps')):
                     self.cmd("""INSERT INTO %s(table1id,date,receptname,stepnumber,action)VALUES 
                     ('%s','%s','%s','%s','%s')"""%(self.table2name,id,datetime.datetime.now(),d.get('recept_name'),i,step))
 
         try:
             write()
-        except:
-            self.create_tables()
-            write()
+        except:                         # if table doesn't exists
+            self.create_tables()        # create them
+            write()                     # write data
+
+        self.close_conn()
 
 
     def cmd(self,cmd):
+        """
+        write sql request
+        :param cmd: sql request
+        """
         with self.conn.cursor() as cur:
             cur.execute(cmd)
 
 
     def get_from_table(self,cmd):
+        """
+        write sql request and get response
+        :param cmd: sql request
+        :return: response
+        """
         with self.conn.cursor() as cur:
             cur.execute(cmd)
             return cur.fetchall()
 
-
-    def drop_tables(self):
-        self.cmd("""drop table Table1 cascade""")
-        self.cmd("""drop table Table2 cascade""")
 
     def close_conn(self):
         self.conn.close()

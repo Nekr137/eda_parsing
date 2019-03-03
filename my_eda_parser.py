@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from my_parser import Parser
-import pandas as pd
 import json
 import re
 

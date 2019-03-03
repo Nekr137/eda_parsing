@@ -1,6 +1,5 @@
 beautifulsoup4-4.7.1
 requests
-pandas
 lxml-4.3.2
 html5lib
 py-postgresql

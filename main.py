@@ -11,19 +11,23 @@ def GetData(type=None):
 
 
 def SaveData(data):
-    username = 'postgres'
-    psw = 'denekra'
-    table1name = 't3'
-    table2name = 't4'
+    username = 'username'
+    psw = 'password'
+    dbname = 'eda_ru_db'
+    table1name = 'Table1'
+    table2name = 'Table2'
 
-    db = my_db(dbname='edadb2',username=username,password=psw,table1name=table1name,table2name=table2name)
+    db = my_db(dbname=dbname, username=username,
+               password=psw, table1name=table1name,
+               table2name=table2name)
     db.append_data(data)
 
 
 def main():
     Japanese = ['recepty/vypechka-deserty/yaponskaya-kuhnya']
     Tay = ['recepty/tayskaya-kuhnya/vypechka-deserty']
-    data = GetData()   # type = Japanese or Tay, empty == both
+
+    data = GetData(Tay)                # type = Japanese or Tay, empty == both
     SaveData(data)                  # write data to db
 
 
