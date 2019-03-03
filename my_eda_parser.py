@@ -95,7 +95,7 @@ class my_eda_parser:
         }
     ]
 
-    def __init__(self, url=None, path_list=None):
+    def __init__(self, path_list=None, url=None, ):
         if path_list:
             self.path_list = path_list        # possibility to change url list
         if url:
@@ -109,9 +109,8 @@ class my_eda_parser:
         P = Parser(self.url)
         for path in self.path_list:
             page = 1
-            print('load ', path)
             while True:             # while pagination list contains data
-                print('Get page: ',page)
+                print('load ', self.url + path + '?page=' + str(page))
 
                 P.load_page(path=path + '?page=' + str(page))
                 if not P.split_page_to_elements(tag='div',classs='clearfix'):
